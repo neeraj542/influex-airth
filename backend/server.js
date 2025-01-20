@@ -12,12 +12,13 @@ const app = express();
 
 /**
  * CORS configuration.
- */
+*/
 
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL || 'https://influex-airth-two.vercel.app', 'http://localhost:5174', 'https://item-list-manager-neeraj542.vercel.app'],
+    origin: [process.env.FRONTEND_URL || 'http://localhost:5174', 'https://item-list-manager-neeraj542.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 };
 
 // Apply CORS middleware with options
