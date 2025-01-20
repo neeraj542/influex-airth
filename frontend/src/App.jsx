@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginButton from './components/LoginButton';
-import UserInfo from './components/UserInfo';
+// import UserInfo from './components/UserInfo';
 import Navbar from './components/Navbar';
-import LandingPage from './components/LandingPage';
+// import LandingPage from './components/LandingPage';
 import Services from './components/Services';
 import Footer from './components/Footer';
 import './styles/App.css';

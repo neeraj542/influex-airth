@@ -9,7 +9,7 @@ export default function LandingPage({ onLogin }) {
 
         <button className="instagram-login" onClick={onLogin}>
           <Instagram className="instagram-icon" />
-          Continue with Instagram
+            Continue with Instagram
         </button>
       </div>
     </section>
