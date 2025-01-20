@@ -16,3 +16,6 @@ const router = express.Router();
 router.get('/exchange-token', exchangeToken);
 
 module.exports = router;
+
+
+/api/exchange-token
