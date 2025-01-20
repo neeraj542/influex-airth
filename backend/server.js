@@ -12,13 +12,14 @@ const app = express();
 
 /**
  * CORS configuration.
-*/
+ */
 
+
+// origin: [process.env.FRONTEND_URL || 'http://localhost:5174', 'https://item-list-manager-neeraj542.vercel.app']
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL || 'http://localhost:5174', 'https://item-list-manager-neeraj542.vercel.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+    origin: process.env.FRONTEND_URL?.split(',') || '*', // Allow specific origins from .env or default to all
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
 };
 
 // Apply CORS middleware with options
