@@ -14,10 +14,9 @@ const app = express();
  * CORS configuration.
  */
 const corsOptions = {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*', // Allow specific origins from .env or default to all
+    origin: process.env.FRONTEND_URL?.split(',') || '*', // Allow specific origins from .env or default to all
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
-    credentials: true, // Allow credentials (e.g., cookies, authorization headers)
 };
 
 // Apply CORS middleware with options
