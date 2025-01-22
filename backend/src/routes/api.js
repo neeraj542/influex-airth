@@ -1,5 +1,6 @@
 const express = require('express');
 const { exchangeToken } = require('../controllers/apiController');
+const { exchangeLongLivedToken } = require('../controllers/apiController');
 
 const router = express.Router();
 
@@ -15,5 +16,14 @@ const router = express.Router();
  */
 router.get('/exchange-token', exchangeToken);
 
+
+/**
+ * Route to exchange short-lived token for long-lived token.
+ * @name GET /api/exchange-long-lived-token
+ * @function
+ * @memberof module:apiRoutes
+ * @inner
+ */
+router.get('/exchange-long-lived-token', exchangeLongLivedToken);
 module.exports = router;
 

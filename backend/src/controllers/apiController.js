@@ -11,6 +11,7 @@ const axios = require('axios');
  */
 exports.exchangeToken = async (req, res) => {
   const authCode = req.query.code;
+  console.log("authCode ", authCode);
   if (!authCode || typeof authCode !== 'string') {
     return res.status(400).send('Authorization code is invalid!');
   }
@@ -35,3 +36,39 @@ exports.exchangeToken = async (req, res) => {
     res.status(500).send(`Error exchanging token: ${error.response?.data?.error_message || error.message}`);
   }
 };
+
+
+/**
+ * Exchanges a short-lived Instagram access token for a long-lived access token.
+ *
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ */
+exports.exchangeLongLivedToken = async (req, res) => {
+    const shortLivedToken = req.query.access_token;
+
+    if (!shortLivedToken) {
+        return res.status(400).json({ error: 'Access token is missing!' });
+    }
+
+    const EXCHANGE_URL = 'https://graph.instagram.com/access_token';
+
+    try {
+        // Send request to exchange the token
+        const response = await axios.get(EXCHANGE_URL, {
+            params: {
+                grant_type: 'ig_exchange_token',
+                client_secret: process.env.CLIENT_SECRET,
+                access_token: shortLivedToken,
+            },
+        });
+
+        // Return the long-lived token
+        res.json(response.data); // Contains long-lived access token and expiration
+    } catch (error) {
+        console.error('Error exchanging token:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to exchange token.', details: error.response?.data });
+    }
+};
+
+

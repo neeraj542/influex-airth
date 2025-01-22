@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginButton from './components/LoginButton';
 // import UserInfo from './components/UserInfo';
 import Navbar from './components/Navbar';
-// import LandingPage from './components/LandingPage';
 import Services from './components/Services';
 import Footer from './components/Footer';
+import FormFAQ from './components/FormFAQ';
 import './styles/App.css';
 
 const App = () => {
@@ -30,6 +30,7 @@ const App = () => {
         </div>
         } />
         <Route path="/services" element={<Services />} />
+        <Route path="/faq" element={<FormFAQ />} />
         {/* Add other routes as needed */}
       </Routes>
       <Footer />
