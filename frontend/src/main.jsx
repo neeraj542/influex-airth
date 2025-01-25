@@ -8,7 +8,7 @@ import './index.css';
  * Entry point for the React application.
  * 
  * This file sets up the React application by rendering the root component
- * into the `root` DOM element. The app is wrapped in a `BrowserRouter`
+ * into the `root` DOM element. The app is wrapped in a `HashRouter`
  * to enable client-side routing with React Router.
  */
 
@@ -23,10 +23,10 @@ const root = ReactDOM.createRoot(rootElement);
 
 /**
  * Render the application.
- * The `BrowserRouter` component enables React Router for client-side navigation.
+ * The `HashRouter` component enables React Router for server-side navigation.
  */
 root.render(
-  <BrowserRouter>
+  <HashRouter>
     <App />
-  </BrowserRouter>
+  </HashRouter>
 );
