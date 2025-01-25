@@ -45,30 +45,59 @@ exports.exchangeToken = async (req, res) => {
  * @param {Object} res - The Express response object.
  */
 exports.exchangeLongLivedToken = async (req, res) => {
-    const shortLivedToken = req.query.access_token;
+  const shortLivedToken = req.query.access_token;
 
-    if (!shortLivedToken) {
-        return res.status(400).json({ error: 'Access token is missing!' });
-    }
+  if (!shortLivedToken) {
+    return res.status(400).json({ error: 'Access token is missing!' });
+  }
 
-    const EXCHANGE_URL = 'https://graph.instagram.com/access_token';
+  const EXCHANGE_URL = 'https://graph.instagram.com/access_token';
+  const AWS_LAMBDA_API_URL = process.env.AWS_LAMBDA_API_URL;
+  
+  // console.log("AWS_LAMBDA_API_URL", AWS_LAMBDA_API_URL);
 
-    try {
-        // Send request to exchange the token
-        const response = await axios.get(EXCHANGE_URL, {
-            params: {
-                grant_type: 'ig_exchange_token',
-                client_secret: process.env.CLIENT_SECRET,
-                access_token: shortLivedToken,
-            },
-        });
+  if (!AWS_LAMBDA_API_URL || !process.env.CLIENT_SECRET) {
+    return res.status(500).json({ error: 'Server configuration is missing required environment variables.' });
+  }
 
-        // Return the long-lived token
-        res.json(response.data); // Contains long-lived access token and expiration
-    } catch (error) {
-        console.error('Error exchanging token:', error.response?.data || error.message);
-        res.status(500).json({ error: 'Failed to exchange token.', details: error.response?.data });
-    }
+  try {
+    // Send request to exchange the token
+    // console.log("inside try block");
+    const exchangeResponse = await axios.get(EXCHANGE_URL, {
+      params: {
+        grant_type: 'ig_exchange_token',
+        client_secret: process.env.CLIENT_SECRET,
+        access_token: shortLivedToken,
+      },
+    });
+
+    const longLivedToken = exchangeResponse.data.access_token;
+    // console.log('Long-Lived Token:', longLivedToken);
+
+    const lambdaResponse = await axios.post(
+      AWS_LAMBDA_API_URL,
+      { access_token: longLivedToken }, // Payload for Lambda
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    // console.log('AWS Lambda Response:', lambdaResponse.data);
+    // res.json(response.data); // Contains long-lived access token and expiration
+
+    res.json({
+      success: true,
+      longLivedToken: exchangeResponse.data, // Instagram token data
+      lambdaResponse: lambdaResponse.data, // Lambda API response
+    });
+
+  } catch (error) {
+    // console.error('Error occurred:', error.response?.data || error.message);
+    const errorDetails = error.response?.data || error.message;
+
+    res.status(500).json({
+      error: 'An error occurred while processing the request.',
+      details: errorDetails,
+    });
+  }
 };
 
 /**
