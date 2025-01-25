@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {HashRouter} from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 
@@ -16,14 +16,15 @@ import './index.css';
 const rootElement = document.getElementById('root');
 
 /**
- * Creates the root for rendering the React application.
- * React 18 introduces the `createRoot` API for concurrent rendering.
+ * Create the root for rendering the React application.
+ * React 18 introduces the `createRoot` API to enable concurrent rendering.
+ * The `createRoot` method is used to initialize the root rendering container.
  */
 const root = ReactDOM.createRoot(rootElement);
 
 /**
  * Render the application.
- * The `HashRouter` component enables React Router for server-side navigation.
+ * The `HashRouter` component is used to enable client-side routing with hash-based URLs.
  */
 root.render(
   <HashRouter>
