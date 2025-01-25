@@ -54,15 +54,12 @@ exports.exchangeLongLivedToken = async (req, res) => {
   const EXCHANGE_URL = 'https://graph.instagram.com/access_token';
   const AWS_LAMBDA_API_URL = process.env.AWS_LAMBDA_API_URL;
   
-  // console.log("AWS_LAMBDA_API_URL", AWS_LAMBDA_API_URL);
-
   if (!AWS_LAMBDA_API_URL || !process.env.CLIENT_SECRET) {
     return res.status(500).json({ error: 'Server configuration is missing required environment variables.' });
   }
 
   try {
     // Send request to exchange the token
-    // console.log("inside try block");
     const exchangeResponse = await axios.get(EXCHANGE_URL, {
       params: {
         grant_type: 'ig_exchange_token',
@@ -72,25 +69,20 @@ exports.exchangeLongLivedToken = async (req, res) => {
     });
 
     const longLivedToken = exchangeResponse.data.access_token;
-    // console.log('Long-Lived Token:', longLivedToken);
 
     const lambdaResponse = await axios.post(
       AWS_LAMBDA_API_URL,
-      { access_token: longLivedToken }, // Payload for Lambda
+      { access_token: longLivedToken }, 
       { headers: { 'Content-Type': 'application/json' } }
     );
 
-    // console.log('AWS Lambda Response:', lambdaResponse.data);
-    // res.json(response.data); // Contains long-lived access token and expiration
-
     res.json({
       success: true,
-      longLivedToken: exchangeResponse.data, // Instagram token data
-      lambdaResponse: lambdaResponse.data, // Lambda API response
+      longLivedToken: exchangeResponse.data, 
+      lambdaResponse: lambdaResponse.data, 
     });
 
   } catch (error) {
-    // console.error('Error occurred:', error.response?.data || error.message);
     const errorDetails = error.response?.data || error.message;
 
     res.status(500).json({
