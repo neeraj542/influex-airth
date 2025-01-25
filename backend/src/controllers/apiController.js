@@ -11,7 +11,7 @@ const axios = require('axios');
  */
 exports.exchangeToken = async (req, res) => {
   const authCode = req.query.code;
-  console.log("authCode ", authCode);
+  // console.log("authCode ", authCode);
   if (!authCode || typeof authCode !== 'string') {
     return res.status(400).send('Authorization code is invalid!');
   }
@@ -71,4 +71,40 @@ exports.exchangeLongLivedToken = async (req, res) => {
     }
 };
 
+/**
+ * Validates a long-lived Instagram access token and checks its expiration date.
+ *
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ */
+exports.checkTokenValidity = async (req, res) => {
+  const longLivedToken = req.query.access_token;
 
+  if (!longLivedToken) {
+    return res.status(400).json({ error: 'Access token is missing!' });
+  }
+  const DEBUG_URL = 'https://graph.facebook.com/debug_token';
+  // const appAccessToken = `${process.env.CLIENT_ID}|${process.env.CLIENT_SECRET}`;
+  
+  try {
+    const response = await axios.get(DEBUG_URL, {
+      params: {
+        input_token: longLivedToken,
+        access_token: process.env.CLIENT_SECRET,
+      },
+    });
+
+    const data = response.data.data;
+    const expiryDate = new Date(data.expires_at * 1000); // Convert expiration to readable format
+
+    res.json({
+      isValid: data.is_valid,
+      expiresAt: expiryDate,
+      scopes: data.scopes,
+      userId: data.user_id,
+    });
+  } catch (error) {
+    console.error('Error validating token:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Failed to validate token.', details: error.response?.data });
+  }
+};

@@ -1,6 +1,9 @@
 const express = require('express');
-const { exchangeToken } = require('../controllers/apiController');
-const { exchangeLongLivedToken } = require('../controllers/apiController');
+const { 
+    exchangeToken, 
+    exchangeLongLivedToken, 
+    checkTokenValidity
+} = require('../controllers/apiController');
 
 const router = express.Router();
 
@@ -16,14 +19,28 @@ const router = express.Router();
  */
 router.get('/exchange-token', exchangeToken);
 
-
 /**
  * Route to exchange short-lived token for long-lived token.
+ * 
  * @name GET /api/exchange-long-lived-token
  * @function
  * @memberof module:apiRoutes
  * @inner
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
  */
 router.get('/exchange-long-lived-token', exchangeLongLivedToken);
-module.exports = router;
 
+/**
+ * Route to check the validity of a long-lived token.
+ * 
+ * @name GET /api/check-token-validity
+ * @function
+ * @memberof module:apiRoutes
+ * @inner
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ */
+router.get('/check-token-validity', checkTokenValidity);
+
+module.exports = router;
