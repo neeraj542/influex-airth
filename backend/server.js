@@ -32,6 +32,7 @@ const corsOptions = {
     origin: [process.env.FRONTEND_URL || 'http://localhost:5173' || 'https://item-list-manager-neeraj542.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+    credentials: true,
 };
 
 // Apply CORS middleware with options
