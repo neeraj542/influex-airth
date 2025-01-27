@@ -25,30 +25,28 @@ mongoose
  * CORS configuration.
  */
 
-const allowedOrigins = [
-    process.env.FRONTEND_URL, // Deployed frontend URL from environment
-    'http://localhost:5173', // Local development URL
-    'https://item-list-manager-neeraj542.vercel.app' // Another deployed frontend URL
-];
-
 const corsOptions = {
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://influex-airth-two.vercel.app',
+      'https://influex-airth.vercel.app',
+      'http://localhost:5173',
+    ];
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, origin);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 };
 
-
-// Apply CORS middleware with options
+// Apply CORS middleware
 app.use(cors(corsOptions));
-
 app.options('*', cors(corsOptions));
+
 
 /**
  * Middleware to parse incoming JSON request bodies.
