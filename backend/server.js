@@ -45,7 +45,7 @@ const corsOptions = {
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
-// app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.options('*', (req, res) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin);
