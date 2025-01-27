@@ -142,7 +142,11 @@ async function callAWSLambda(longLivedToken) {
 
 exports.exchangeLongLivedToken = async (req, res) => {
   const shortLivedToken = req.query.access_token;
-  console.log("Received short-lived token:", shortLivedToken);
+// <<<<<<< dev-app
+//   console.log("Received short-lived token:", shortLivedToken);
+// =======
+  // console.log("Received short-lived token:", shortLivedToken);
+// >>>>>>> main
 
   if (!shortLivedToken) {
     return res.status(400).json({ error: 'Access token is missing!' });
@@ -150,10 +154,17 @@ exports.exchangeLongLivedToken = async (req, res) => {
 
   try {
     const longLivedToken = await getLongLivedToken(shortLivedToken);
-    console.log("Received long-lived token:", longLivedToken);
+// <<<<<<< dev-app
+//     console.log("Received long-lived token:", longLivedToken);
 
     const lambdaResponse = await callAWSLambda(longLivedToken);
-    console.log("Lambda response:", lambdaResponse);
+//     console.log("Lambda response:", lambdaResponse);
+// =======
+    // console.log("Received long-lived token:", longLivedToken);
+
+    const lambdaResponse = await callAWSLambda(longLivedToken);
+    // console.log("Lambda response:", lambdaResponse);
+// >>>>>>> main
 
     res.json({
       success: true,
@@ -161,7 +172,11 @@ exports.exchangeLongLivedToken = async (req, res) => {
       lambdaResponse,
     });
   } catch (error) {
-    console.error("Error exchanging token:", error.message);
+// <<<<<<< dev-app
+//     console.error("Error exchanging token:", error.message);
+// =======
+    // console.error("Error exchanging token:", error.message);
+// >>>>>>> main
     res.status(500).json({
       error: 'An error occurred while processing the request.',
       details: error.message,
