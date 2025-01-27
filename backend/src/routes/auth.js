@@ -1,6 +1,6 @@
 const express = require('express');
-const { login, redirect, registerUser, loginUser, logoutUser } = require('../controllers/authController');
-
+const { login, redirect, userSignup, loginUser, logoutUser,getProfile } = require('../controllers/authController');
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
 /**
@@ -39,7 +39,7 @@ router.get('/redirect', redirect);
  * @param {Object} req - The HTTP request object.
  * @param {Object} res - The HTTP response object.
  */
-router.post('/register', registerUser);
+router.post('/signup', userSignup);
 
 /**
  * Route to login an existing user.
@@ -64,5 +64,7 @@ router.post('/login-user', loginUser);
  * @param {Object} res - The HTTP response object.
  */
 router.post('/logout-user', logoutUser);
+
+router.get('/profile', authMiddleware, getProfile);
 
 module.exports = router;

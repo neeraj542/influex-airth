@@ -26,15 +26,17 @@ mongoose
  */
 
 
-// origin: [process.env.FRONTEND_URL || 'http://localhost:5174', 'https://item-list-manager-neeraj542.vercel.app']
+// origin: [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://item-list-manager-neeraj542.vercel.app']
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL || 'http://localhost:5174', 'https://item-list-manager-neeraj542.vercel.app'], // Allow specific origins from .env or default to all
+    origin: ['http://localhost:5173', 'https://item-list-manager-neeraj542.vercel.app' || process.env.FRONTEND_URL ], // Allow specific origins from .env or default to all
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
 };
 
 // Apply CORS middleware with options
 app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
 
 /**
  * Middleware to parse incoming JSON request bodies.
