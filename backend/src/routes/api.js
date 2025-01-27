@@ -1,8 +1,7 @@
 const express = require('express');
 const { 
     exchangeToken, 
-    exchangeLongLivedToken, 
-    checkTokenValidity
+    exchangeLongLivedToken
 } = require('../controllers/apiController');
 
 const router = express.Router();
