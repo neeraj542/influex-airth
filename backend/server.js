@@ -26,9 +26,10 @@ mongoose
  */
 
 
-// origin: [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://item-list-manager-neeraj542.vercel.app']
+// origin: 'http://localhost:5173',
+// 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'https://item-list-manager-neeraj542.vercel.app' || process.env.FRONTEND_URL ], // Allow specific origins from .env or default to all
+    origin: [process.env.FRONTEND_URL || 'http://localhost:5173' || 'https://item-list-manager-neeraj542.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
 };
@@ -50,7 +51,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, 'public')));
 }
 
-/**
+/*
  * Routes for authentication-related functionality.
  */
 app.use('/auth', authRoutes);

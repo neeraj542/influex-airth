@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { ChevronDown, ChevronUp, Monitor, Mail, Twitter, Linkedin } from 'lucide-react';
+import { Twitter, Linkedin, Mail } from 'lucide-react';
 
 /**
  * The `Footer` component renders a footer section with the following features:
@@ -23,7 +23,7 @@ import { ChevronDown, ChevronUp, Monitor, Mail, Twitter, Linkedin } from 'lucide
 const Footer = () => (
   <footer className="bg-purple-900 text-white py-12">
     <div className="container mx-auto px-4">
-      <div className="grid md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {/* Branding and Navigation Links */}
         <div>
           <h1 className="text-2xl font-bold mb-4">Influex 🌍</h1>
@@ -48,7 +48,7 @@ const Footer = () => (
         {/* Newsletter Subscription Form */}
         <div className="md:col-span-2">
           <h3 className="text-lg font-bold mb-4">Newsletter</h3>
-          <div className="flex">
+          <div className="flex flex-col sm:flex-row">
             <input
               type="email"
               placeholder="Enter your email"
@@ -56,7 +56,7 @@ const Footer = () => (
               aria-label="Email input for newsletter subscription"
             />
             <button
-              className="px-6 py-2 rounded-r-lg bg-purple-800 hover:bg-purple-900 transform hover:scale-105 transition-all"
+              className="mt-2 sm:mt-0 sm:px-6 py-2 rounded-r-lg bg-purple-800 hover:bg-purple-900 transform hover:scale-105 transition-all"
               aria-label="Subscribe button"
             >
               Subscribe

@@ -1,17 +1,13 @@
-/**
- * @fileoverview This file defines the `Header` React functional component that renders a fixed header with 
- * a logo, navigation links, and a login button. The component conditionally renders the navigation links 
- * based on the current page, and handles login redirection.
- */
-
-import React from 'react';
-import { useLocation } from 'react-router-dom'; // Import React Router's useLocation hook
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { User, LogOut } from 'lucide-react'; // Icons for user profile and logout
+import { Link } from 'react-router-dom';
 
 /**
  * The `Header` component renders a fixed navigation header at the top of the page.
  * - The logo is clickable and redirects the user to the home page.
  * - Navigation items are conditionally displayed based on the current route.
- * - A "Sign Up Free" button redirects the user to a login page.
+ * - The header displays Sign In/Sign Up buttons or the User Profile icon based on authentication status.
  *
  * @component
  * @example
@@ -21,55 +17,82 @@ import { useLocation } from 'react-router-dom'; // Import React Router's useLoca
  *
  * @returns {JSX.Element} A React component rendering the header.
  */
-const Header = () => {
-  /**
-   * The `location` object contains the current URL information (pathname, search, hash).
-   * We use this to conditionally render navigation links based on the current route.
-   * @type {Object}
-   */
-  const location = useLocation(); // Get the current route's location
+const Header = ({ navigate, hideNavItems, isLoggedIn }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  /**
-   * Handles the login action by redirecting the user to the backend login URL.
-   */
-  const handleLogin = () => {
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-    window.location.href = `${backendUrl}/auth/login`;
+  // Handle logout by clearing the token and redirecting to login
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Clear the stored token
+    navigate('/auth/login-user'); // Redirect to the login page
   };
-
-  /**
-   * Handles the logo click action by redirecting the user to the home page (`/`).
-   */
-  const handleLogoClick = () => {
-    // Reload and navigate to home page (/)
-    window.location.href = '/';
-  };
-
-  // Check if the current route is `faq-form`
-  const isFaqPage = location.pathname === '/faq-form';
 
   return (
     <header className="fixed top-0 w-full bg-white shadow-sm z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo that redirects to home page */}
-        <div className="text-2xl font-bold text-purple-800 cursor-pointer" onClick={handleLogoClick}>
+        <div 
+          className="text-2xl font-bold text-purple-800 cursor-pointer" 
+          onClick={() => navigate('/')} 
+          aria-label="Go to homepage"
+        >
           Influex 🌍
         </div>
 
-        {/* Conditionally render the navigation items based on the current page */}
-        {!isFaqPage && (
-          <nav className="hidden md:flex space-x-6">
-            <a href="#what-we-do" className="text-purple-900 hover:text-purple-700">What We Do</a>
-            <a href="#features" className="text-purple-900 hover:text-purple-700">Features</a>
-            <a href="#faq" className="text-purple-900 hover:text-purple-700">FAQ</a>
-            <a href="#download" className="text-purple-900 hover:text-purple-700">Download</a>
-          </nav>
-        )}
-        
-        {/* Sign Up Free button */}
-        <button onClick={handleLogin} className="text-white px-6 py-2 rounded-lg bg-purple-800 hover:bg-purple-900">
-          Sign Up Free
+        {/* Hamburger menu button for mobile */}
+        <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          ☰
         </button>
+
+        {/* Conditionally render the navigation items */}
+        <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:flex space-x-6`} aria-label="Main navigation">
+          <Link to="#what-we-do" className="text-purple-900 hover:text-purple-700">What We Do</Link>
+          <Link to="#features" className="text-purple-900 hover:text-purple-700">Features</Link>
+          <Link to="#faq" className="text-purple-900 hover:text-purple-700">FAQ</Link>
+          <Link to="#download" className="text-purple-900 hover:text-purple-700">Download</Link>
+        </nav>
+
+        {/* Conditionally render buttons or profile icon */}
+        {isLoggedIn ? (
+          <div className="flex items-center space-x-4">
+            {/* User Profile Icon */}
+            <button
+              onClick={() => navigate('/profile')} // Redirect to user profile page
+              className="text-purple-800 hover:text-purple-700"
+              aria-label="Go to profile"
+            >
+              <User className="h-6 w-6" />
+            </button>
+            
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="text-white px-4 py-2 bg-purple-800 rounded-lg hover:bg-purple-900"
+              aria-label="Log out"
+            >
+              <LogOut className="h-5 w-5 inline mr-2" /> Logout
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-4">
+            {/* Sign In Button */}
+            <button
+              onClick={() => navigate('/auth/login-user')}
+              className="text-purple-800 hover:text-purple-700"
+              aria-label="Go to login page"
+            >
+              Sign In
+            </button>
+
+            {/* Sign Up Button */}
+            <button
+              onClick={() => navigate('/auth/signup')}
+              className="text-white px-6 py-2 bg-purple-800 rounded-lg hover:bg-purple-900"
+              aria-label="Go to sign-up page"
+            >
+              Sign Up
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
