@@ -60,7 +60,7 @@ const redirect = async (req, res) => {
  * @param {Object} req - The HTTP request object.
  * @param {Object} res - The HTTP response object.
  */
-const registerUser = async (req, res) => {
+const userSignup = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -132,14 +132,26 @@ const loginUser = async (req, res) => {
  * @returns {void} Sends a JSON response with a success message.
  */
 const logoutUser = (req, res) => {
-    res.status(200).json({ message: 'User logged out successfully.' });
-  };
+  res.status(200).json({ message: 'User logged out successfully.' });
+};
 
-  
+const getProfile = async (req, res) => {
+  try {
+    const user = req.user; // User is already attached by the middleware
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   login,
   redirect,
-  registerUser,
+  userSignup,
   loginUser,
   logoutUser,
+  getProfile,
 };
