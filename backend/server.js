@@ -16,24 +16,34 @@ const app = express();
  * Connect to MongoDB
  */
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Failed to connect to MongoDB:', err));
+    .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Failed to connect to MongoDB:', err));
 
 
 /**
  * CORS configuration.
  */
 
+const allowedOrigins = [
+    process.env.FRONTEND_URL, // Deployed frontend URL from environment
+    'http://localhost:5173', // Local development URL
+    'https://item-list-manager-neeraj542.vercel.app' // Another deployed frontend URL
+];
 
-// origin: 'http://localhost:5173',
-// 
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL || 'http://localhost:5173' || 'https://item-list-manager-neeraj542.vercel.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 };
+
 
 // Apply CORS middleware with options
 app.use(cors(corsOptions));
