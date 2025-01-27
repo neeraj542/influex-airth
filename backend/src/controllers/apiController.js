@@ -59,7 +59,6 @@ exports.exchangeLongLivedToken = async (req, res) => {
   }
 
   try {
-    // Send request to exchange the token
     const exchangeResponse = await axios.get(EXCHANGE_URL, {
       params: {
         grant_type: 'ig_exchange_token',
