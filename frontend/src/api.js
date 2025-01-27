@@ -5,7 +5,7 @@ import axios from 'axios';
  */
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  // withCredentials: true, // Use this to point to your backend
+  withCredentials: true, // Use this to point to your backend
 });
 
 // Add Authorization Header for Protected Routes
