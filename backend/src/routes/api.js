@@ -31,16 +31,5 @@ router.get('/exchange-token', exchangeToken);
  */
 router.get('/exchange-long-lived-token', exchangeLongLivedToken);
 
-/**
- * Route to check the validity of a long-lived token.
- * 
- * @name GET /api/check-token-validity
- * @function
- * @memberof module:apiRoutes
- * @inner
- * @param {Object} req - The HTTP request object.
- * @param {Object} res - The HTTP response object.
- */
-router.get('/check-token-validity', checkTokenValidity);
 
 module.exports = router;
