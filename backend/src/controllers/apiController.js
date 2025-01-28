@@ -71,7 +71,7 @@ exports.exchangeToken = async (req, res) => {
 //         access_token: shortLivedToken,
 //       },
 //     });
-    
+
 //     console.log("Instagram response:", exchangeResponse.data); // Log the Instagram response
 
 //     const longLivedToken = exchangeResponse.data.access_token;
@@ -84,7 +84,7 @@ exports.exchangeToken = async (req, res) => {
 //       { access_token: longLivedToken },
 //       { headers: { 'Content-Type': 'application/json' } }
 //     );
-    
+
 //     // console.log("Lambda response:", lambdaResponse.data); // Log the Lambda response
 
 //     // Send the response back to the client

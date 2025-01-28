@@ -14,9 +14,19 @@ const generateToken = (id) => {
  * @param {Object} res - The HTTP response object.
  */
 const login = (req, res) => {
-  const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
-  res.redirect(instagramAuthUrl);
+  try {
+    console.log("Starting Instagram OAuth flow...");
+
+    const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+    // Redirect the user to Instagram's OAuth authorization page
+    console.log("instagramAuthUrl ", instagramAuthUrl);
+    res.redirect(instagramAuthUrl);
+  } catch (error) {
+    console.error("Error in /auth/login route:", error);
+    res.status(500).json({ error: 'Something went wrong during the OAuth login process.' });
+  }
 };
+
 
 /**
  * Handles the Instagram OAuth redirect by exchanging the authorization code
@@ -30,17 +40,17 @@ const login = (req, res) => {
  */
 const redirect = async (req, res) => {
   const { code } = req.query;
-
+  console.log("code", code);
   if (!code) {
     return res.status(400).json({ error: 'Authorization code is missing.' });
   }
-
+  
   try {
     const tokenResponse = await axios.post('https://api.instagram.com/oauth/access_token', {
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
       grant_type: 'authorization_code',
-      redirect_uri: process.env.REDIRECT_URI,
+      redirect_uri: encodeURIComponent(process.env.REDIRECT_URI),
       code,
     });
 

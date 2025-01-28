@@ -16,28 +16,44 @@ const app = express();
  * Connect to MongoDB
  */
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Failed to connect to MongoDB:', err));
+    .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Failed to connect to MongoDB:', err));
 
 
 /**
  * CORS configuration.
  */
-
-
-// origin: 'http://localhost:5173',
-// 
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL || 'http://localhost:5173' || 'https://item-list-manager-neeraj542.vercel.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            'https://influex-airth-two.vercel.app',
+            'https://influex-airth.vercel.app',
+            'http://localhost:5173',
+        ];
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, origin);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 };
 
-// Apply CORS middleware with options
+// Apply CORS middleware    
 app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions));
 
-app.options('*', cors(corsOptions));
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200); // HTTP OK
+  next();
+});
 
 /**
  * Middleware to parse incoming JSON request bodies.
