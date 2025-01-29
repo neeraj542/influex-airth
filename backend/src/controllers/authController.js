@@ -9,7 +9,7 @@ const User = require('../models/User');
  * @param {Object} res - The HTTP response object.
  */
 const login = (req, res) => {
-  const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+  const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
   res.redirect(instagramAuthUrl);
 };
 
