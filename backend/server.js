@@ -13,28 +13,16 @@ const apiRoutes = require('./src/routes/api');
 const app = express();
 
 /**
- * Connect to MongoDB
- */
-// mongoose
-//     .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-//     .then(() => console.log('Connected to MongoDB'))
-//     .catch(err => console.error('Failed to connect to MongoDB:', err));
-
-
-/**
  * CORS configuration.
- */
-
-// Apply CORS middleware    
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
+ */  
 const corsOptions = {
   origin: ['https://influex-airth-two.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 /**
  * Middleware to parse incoming JSON request bodies.
