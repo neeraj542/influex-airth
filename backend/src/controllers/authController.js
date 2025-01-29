@@ -9,9 +9,21 @@ const User = require('../models/User');
  * @param {Object} res - The HTTP response object.
  */
 const login = (req, res) => {
-  const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+  const { CLIENT_ID, REDIRECT_URI } = process.env;
+
+  const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?` +
+    `enable_fb_login=0&force_authentication=1&` +
+    `client_id=${CLIENT_ID}&` +
+    `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+    `response_type=code&` +
+    `scope=instagram_business_basic,` +
+    `instagram_business_manage_messages,` +
+    `instagram_business_manage_comments,` +
+    `instagram_business_content_publish`;
+
   res.redirect(instagramAuthUrl);
 };
+
 
 
 /**
@@ -36,7 +48,7 @@ const redirect = async (req, res) => {
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
       grant_type: 'authorization_code',
-      redirect_uri: process.env.REDIRECT_URI,
+      redirect_uri: encodeURIComponent(process.env.REDIRECT_URI),
       code,
     });
 
