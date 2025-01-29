@@ -130,71 +130,40 @@
 //   );
 // };
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useRoutes } from 'react-router-dom';
-import HeroSection from './components/HeroSection';
-import InstagramLogin from './components/InstagramLogin';
 
-function App() {
+
+
+import React, { useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+// import LoginButton from './components/LoginButton';
+import AuthRedirect from './components/AuthRedirect';
+import HeroSection from './components/HeroSection';
+
+const App = () => {
    const [accessToken, setAccessToken] = useState(null);
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState(null);
 
    useEffect(() => {
       const params = new URLSearchParams(window.location.search);
-      const authCode = params.get('code');
-
-      if (authCode) {
-         console.log("Auth Code Retrieved from URL:", authCode);
-         setLoading(true);
-
-         // Call backend to exchange the code for an access token
-         axios
-            .get(`${import.meta.env.VITE_API_BASE_URL}/auth/redirect`, {
-               params: { code: authCode },
-            })
-            .then((response) => {
-               console.log("Access Token Response:", response.data);
-               const { access_token, user_id } = response.data;
-               setAccessToken(access_token);
-
-               // Store the token in localStorage for future use
-               localStorage.setItem('access_token', access_token);
-
-               // Clear the URL query string after processing
-               window.history.replaceState({}, document.title, window.location.pathname);
-            })
-            .catch((error) => {
-               console.error("Failed to get token:", error.response?.data || error.message);
-               setError("Authentication failed. Please try again.");
-            })
-            .finally(() => {
-               setLoading(false);
-            });
+      const token = params.get('access_token');
+      if (token) {
+         setAccessToken(token);
       }
    }, []);
 
-   const routes = [
-      {
-         path: "/",
-         element: <HeroSection />
-      },{
-         path: "/instagram-login",
-         element: <InstagramLogin />
-      }
-   ];
-
-   const element = useRoutes(routes);
-
    return (
-      <div>
-         <h2>Home Page</h2>
-         {loading && <p>Loading...</p>}
-         {error && <p>{error}</p>}
-         {element}
-      </div>
-   );
-}
+      <Routes>
+         <Route
+            path="/"
+            element={
+               <div className="container" style={{ textAlign: 'center' }}>
+                  <h1 className="title">Instagram OAuth Integration</h1>
+                  {!accessToken ? <HeroSection /> : <p>Logged in successfully! 🎉</p>}
+               </div>
+            }
+         />
 
+      <Route path="/auth/redirect" element={<AuthRedirect />} />
+      </Routes>
+   );
+};
 export default App;
