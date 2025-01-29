@@ -49,10 +49,9 @@ const InstagramLogin = () => {
 
   return (
     <div>
+      <h2>Instagram Login Route Loaded!</h2>
        {loading && <div className="spinner">Loading...</div>}
        {error && <p>{error}</p>}
-
-       <Hello>Hi</Hello>
     </div>
  );
 };
