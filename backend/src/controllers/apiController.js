@@ -19,7 +19,7 @@ exports.exchangeToken = async (req, res) => {
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
     grant_type: 'authorization_code',
-    redirect_uri: 'https://item-list-manager-neeraj542.vercel.app/auth/redirect',
+    redirect_uri: 'https://influex-airth.vercel.app/auth/redirect',
     code: authCode,
   };
 
