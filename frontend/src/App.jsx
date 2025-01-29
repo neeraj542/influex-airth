@@ -189,6 +189,7 @@ function App() {
 
    return (
       <div>
+         <h2>Home Page</h2>
          {loading && <p>Loading...</p>}
          {error && <p>{error}</p>}
          {element}
