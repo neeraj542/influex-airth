@@ -1,6 +1,4 @@
 const axios = require('axios');
-// const { clientId, clientSecret, redirectUri } = require('../config/credentials');
-
 /**
  * Exchanges an authorization code obtained from Instagram for an access token.
  *
@@ -142,16 +140,12 @@ async function callAWSLambda(longLivedToken) {
 
 exports.exchangeLongLivedToken = async (req, res) => {
   const shortLivedToken = req.query.access_token;
-  console.log("Received short-lived token:", shortLivedToken);
-
   if (!shortLivedToken) {
     return res.status(400).json({ error: 'Access token is missing!' });
   }
 
   try {
     const longLivedToken = await getLongLivedToken(shortLivedToken);
-    console.log("Received long-lived token:", longLivedToken);
-
     const lambdaResponse = await callAWSLambda(longLivedToken);
     console.log("Lambda response:", lambdaResponse);
 
@@ -161,7 +155,6 @@ exports.exchangeLongLivedToken = async (req, res) => {
       lambdaResponse,
     });
   } catch (error) {
-    console.error("Error exchanging token:", error.message);
     res.status(500).json({
       error: 'An error occurred while processing the request.',
       details: error.message,

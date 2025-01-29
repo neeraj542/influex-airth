@@ -134,6 +134,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRoutes } from 'react-router-dom';
 import HeroSection from './components/HeroSection';
+import InstagramLogin from './components/InstagramLogin';
 
 function App() {
    const [accessToken, setAccessToken] = useState(null);
@@ -177,8 +178,11 @@ function App() {
    const routes = [
       {
          path: "/",
-         element: <HeroSection />,
-      },
+         element: <HeroSection />
+      },{
+         path: "/instagram-login",
+         element: <InstagramLogin />
+      }
    ];
 
    const element = useRoutes(routes);
