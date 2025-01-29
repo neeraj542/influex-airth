@@ -137,43 +137,43 @@ import HeroSection from './components/HeroSection';
 import InstagramLogin from './components/InstagramLogin';
 
 function App() {
-   // const [accessToken, setAccessToken] = useState(null);
-   // const [loading, setLoading] = useState(false);
-   // const [error, setError] = useState(null);
+   const [accessToken, setAccessToken] = useState(null);
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState(null);
 
-   // useEffect(() => {
-   //    const params = new URLSearchParams(window.location.search);
-   //    const authCode = params.get('code');
+   useEffect(() => {
+      const params = new URLSearchParams(window.location.search);
+      const authCode = params.get('code');
 
-   //    if (authCode) {
-   //       console.log("Auth Code Retrieved from URL:", authCode);
-   //       setLoading(true);
+      if (authCode) {
+         console.log("Auth Code Retrieved from URL:", authCode);
+         setLoading(true);
 
-   //       // Call backend to exchange the code for an access token
-   //       axios
-   //          .get(`${import.meta.env.VITE_API_BASE_URL}/auth/redirect`, {
-   //             params: { code: authCode },
-   //          })
-   //          .then((response) => {
-   //             console.log("Access Token Response:", response.data);
-   //             const { access_token, user_id } = response.data;
-   //             setAccessToken(access_token);
+         // Call backend to exchange the code for an access token
+         axios
+            .get(`${import.meta.env.VITE_API_BASE_URL}/auth/redirect`, {
+               params: { code: authCode },
+            })
+            .then((response) => {
+               console.log("Access Token Response:", response.data);
+               const { access_token, user_id } = response.data;
+               setAccessToken(access_token);
 
-   //             // Store the token in localStorage for future use
-   //             localStorage.setItem('access_token', access_token);
+               // Store the token in localStorage for future use
+               localStorage.setItem('access_token', access_token);
 
-   //             // Clear the URL query string after processing
-   //             window.history.replaceState({}, document.title, window.location.pathname);
-   //          })
-   //          .catch((error) => {
-   //             console.error("Failed to get token:", error.response?.data || error.message);
-   //             setError("Authentication failed. Please try again.");
-   //          })
-   //          .finally(() => {
-   //             setLoading(false);
-   //          });
-   //    }
-   // }, []);
+               // Clear the URL query string after processing
+               window.history.replaceState({}, document.title, window.location.pathname);
+            })
+            .catch((error) => {
+               console.error("Failed to get token:", error.response?.data || error.message);
+               setError("Authentication failed. Please try again.");
+            })
+            .finally(() => {
+               setLoading(false);
+            });
+      }
+   }, []);
 
    const routes = [
       {
@@ -190,7 +190,9 @@ function App() {
    return (
       <div>
          <h2>Home Page</h2>
-         <HeroSection />
+         {loading && <div className="spinner">Loading...</div>}
+          {error && <p>{error}</p>}
+         
 
       </div>
    );
