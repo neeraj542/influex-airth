@@ -190,10 +190,9 @@ function App() {
    return (
       <div>
          <h2>Home Page</h2>
-         {loading && <div className="spinner">Loading...</div>}
-          {error && <p>{error}</p>}
-         
-
+         {loading && <p>Loading...</p>}
+         {error && <p>{error}</p>}
+         {element}
       </div>
    );
 }
