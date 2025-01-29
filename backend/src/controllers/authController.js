@@ -2,11 +2,6 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-};
-
 /**
  * Redirects the user to the Instagram OAuth authorization URL.
  * 
@@ -14,17 +9,8 @@ const generateToken = (id) => {
  * @param {Object} res - The HTTP response object.
  */
 const login = (req, res) => {
-  try {
-    console.log("Starting Instagram OAuth flow...");
-
-    const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
-    // Redirect the user to Instagram's OAuth authorization page
-    console.log("instagramAuthUrl ", instagramAuthUrl);
-    res.redirect(instagramAuthUrl);
-  } catch (error) {
-    console.error("Error in /auth/login route:", error);
-    res.status(500).json({ error: 'Something went wrong during the OAuth login process.' });
-  }
+  const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
+  res.redirect(instagramAuthUrl);
 };
 
 
