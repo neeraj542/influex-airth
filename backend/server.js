@@ -16,7 +16,7 @@ const app = express();
  * CORS configuration.
  */  
 const corsOptions = {
-  origin: ['https://influex-airth.vercel.app', 'https://influex-airth.vercel.app/instagram-login'],
+  origin: ['https://influex-airth.vercel.app', 'https://influex-airth.vercel.app/instagram-login', 'https://item-list-manager-neeraj542.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
