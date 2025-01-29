@@ -32,7 +32,7 @@ const Header = ({ navigate, hideNavItems, isLoggedIn }) => {
         {/* Logo that redirects to home page */}
         <div 
           className="text-2xl font-bold text-purple-800 cursor-pointer" 
-          onClick={() => navigate('/')} 
+          onClick={() => navigate('/', { replace: true })} 
           aria-label="Go to homepage"
         >
           Influex 🌍
@@ -45,10 +45,15 @@ const Header = ({ navigate, hideNavItems, isLoggedIn }) => {
 
         {/* Conditionally render the navigation items */}
         <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:flex space-x-6`} aria-label="Main navigation">
-          <Link to="#what-we-do" className="text-purple-900 hover:text-purple-700">What We Do</Link>
-          <Link to="#features" className="text-purple-900 hover:text-purple-700">Features</Link>
-          <Link to="#faq" className="text-purple-900 hover:text-purple-700">FAQ</Link>
-          <Link to="#download" className="text-purple-900 hover:text-purple-700">Download</Link>
+          {/* Only display navigation items if hideNavItems is false */}
+          {!hideNavItems && (
+            <>
+              <Link to="#what-we-do" replace className="text-purple-900 hover:text-purple-700">What We Do</Link>
+              <Link to="#features"  replace className="text-purple-900 hover:text-purple-700">Features</Link>
+              <Link to="#faq" replace className="text-purple-900 hover:text-purple-700">FAQ</Link>
+              <Link to="#download" replace className="text-purple-900 hover:text-purple-700">Download</Link>
+            </>
+          )}
         </nav>
 
         {/* Conditionally render buttons or profile icon */}
@@ -56,7 +61,7 @@ const Header = ({ navigate, hideNavItems, isLoggedIn }) => {
           <div className="flex items-center space-x-4">
             {/* User Profile Icon */}
             <button
-              onClick={() => navigate('/profile')} // Redirect to user profile page
+              onClick={() => navigate('/profile', { replace: true })} // Redirect to user profile page
               className="text-purple-800 hover:text-purple-700"
               aria-label="Go to profile"
             >
@@ -76,7 +81,7 @@ const Header = ({ navigate, hideNavItems, isLoggedIn }) => {
           <div className="flex items-center space-x-4">
             {/* Sign In Button */}
             <button
-              onClick={() => navigate('/auth/login-user')}
+              onClick={() => navigate('/auth/login-user', { replace: true })}
               className="text-purple-800 hover:text-purple-700"
               aria-label="Go to login page"
             >
@@ -85,7 +90,7 @@ const Header = ({ navigate, hideNavItems, isLoggedIn }) => {
 
             {/* Sign Up Button */}
             <button
-              onClick={() => navigate('/auth/signup')}
+              onClick={() => navigate('/auth/signup', { replace: true })}
               className="text-white px-6 py-2 bg-purple-800 rounded-lg hover:bg-purple-900"
               aria-label="Go to sign-up page"
             >

@@ -1,6 +1,4 @@
 const axios = require('axios');
-// const { clientId, clientSecret, redirectUri } = require('../config/credentials');
-
 /**
  * Exchanges an authorization code obtained from Instagram for an access token.
  *
@@ -71,7 +69,7 @@ exports.exchangeToken = async (req, res) => {
 //         access_token: shortLivedToken,
 //       },
 //     });
-    
+
 //     console.log("Instagram response:", exchangeResponse.data); // Log the Instagram response
 
 //     const longLivedToken = exchangeResponse.data.access_token;
@@ -84,7 +82,7 @@ exports.exchangeToken = async (req, res) => {
 //       { access_token: longLivedToken },
 //       { headers: { 'Content-Type': 'application/json' } }
 //     );
-    
+
 //     // console.log("Lambda response:", lambdaResponse.data); // Log the Lambda response
 
 //     // Send the response back to the client
@@ -142,29 +140,14 @@ async function callAWSLambda(longLivedToken) {
 
 exports.exchangeLongLivedToken = async (req, res) => {
   const shortLivedToken = req.query.access_token;
-// <<<<<<< dev-app
-//   console.log("Received short-lived token:", shortLivedToken);
-// =======
-  // console.log("Received short-lived token:", shortLivedToken);
-// >>>>>>> main
-
   if (!shortLivedToken) {
     return res.status(400).json({ error: 'Access token is missing!' });
   }
 
   try {
     const longLivedToken = await getLongLivedToken(shortLivedToken);
-// <<<<<<< dev-app
-//     console.log("Received long-lived token:", longLivedToken);
-
     const lambdaResponse = await callAWSLambda(longLivedToken);
-//     console.log("Lambda response:", lambdaResponse);
-// =======
-    // console.log("Received long-lived token:", longLivedToken);
-
-    const lambdaResponse = await callAWSLambda(longLivedToken);
-    // console.log("Lambda response:", lambdaResponse);
-// >>>>>>> main
+    console.log("Lambda response:", lambdaResponse);
 
     res.json({
       success: true,
@@ -172,11 +155,6 @@ exports.exchangeLongLivedToken = async (req, res) => {
       lambdaResponse,
     });
   } catch (error) {
-// <<<<<<< dev-app
-//     console.error("Error exchanging token:", error.message);
-// =======
-    // console.error("Error exchanging token:", error.message);
-// >>>>>>> main
     res.status(500).json({
       error: 'An error occurred while processing the request.',
       details: error.message,

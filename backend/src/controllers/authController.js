@@ -2,11 +2,6 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-};
-
 /**
  * Redirects the user to the Instagram OAuth authorization URL.
  * 
@@ -17,6 +12,7 @@ const login = (req, res) => {
   const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish`;
   res.redirect(instagramAuthUrl);
 };
+
 
 /**
  * Handles the Instagram OAuth redirect by exchanging the authorization code
@@ -30,17 +26,17 @@ const login = (req, res) => {
  */
 const redirect = async (req, res) => {
   const { code } = req.query;
-
+  console.log("code", code);
   if (!code) {
     return res.status(400).json({ error: 'Authorization code is missing.' });
   }
-
+  
   try {
     const tokenResponse = await axios.post('https://api.instagram.com/oauth/access_token', {
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
       grant_type: 'authorization_code',
-      redirect_uri: process.env.REDIRECT_URI,
+      redirect_uri: encodeURIComponent(process.env.REDIRECT_URI),
       code,
     });
 
