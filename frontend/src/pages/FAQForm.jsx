@@ -976,10 +976,10 @@ const FAQForm = () => {
 
 
 const handleSubmit = (formData) => {
-    console.log("accessToken: ", accessToken);
+    console.log("accessToken: ", access_token);
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/submit-form`, formData, {
         headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${access_token}`,
             'Content-Type': 'application/json'
         }
     })
