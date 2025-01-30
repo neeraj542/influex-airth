@@ -41,6 +41,9 @@ const AuthRedirect = () => {
                     setAccessToken(response.data.longLivedToken.access_token);
                     setLambdaResponse(response.data.lambdaResponse);
 
+                  // Optionally, store accessToken securely, e.g., in localStorage
+                    localStorage.setItem('access_token', response.data.longLivedToken.access_token
+
                     // Optionally clear the URL after processing
                     window.history.replaceState({}, document.title, window.location.pathname);
                 })
