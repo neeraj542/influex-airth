@@ -975,19 +975,24 @@ const FAQForm = () => {
     });
 
 
-    const handleSubmit = (formData) => {
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/submit-form`, formData, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            }
-        })
-        .then(response => {
-            console.log("AWS API Response:", response.data);
-        })
-        .catch(error => {
-            console.error("Error calling AWS API:", error.response?.data || error.message);
-        });
-    };
+const handleSubmit = (formData) => {
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/submit-form`, formData, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        }
+    })
+    .then(response => {
+        console.log("AWS API Response:", response.data);
+        if (response.data.lambdaResponse) {
+            console.log("Lambda Response:", response.data.lambdaResponse);
+        } else {
+            console.log("Lambda Response not found in the API response.");
+        }
+    })
+    .catch(error => {
+        console.error("Error calling AWS API:", error.response?.data || error.message);
+    });
+};
 
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 mt-12">
