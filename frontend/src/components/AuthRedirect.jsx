@@ -37,12 +37,16 @@ const AuthRedirect = () => {
                 .then((response) => {
                     console.log("Long-Lived Token Response:", response.data);
 
-                    // Save the long-lived token and Lambda response
-                    setAccessToken(response.data.longLivedToken.access_token);
-                    setLambdaResponse(response.data.lambdaResponse);
+                  //   // Save the long-lived token and Lambda response
+                  //   setAccessToken(response.data.longLivedToken.access_token);
+                  //   setLambdaResponse(response.data.lambdaResponse);
 
-                  // Optionally, store accessToken securely, e.g., in localStorage
-                    localStorage.setItem('accessToken', response.data.longLivedToken.access_token);
+                  // // Optionally, store accessToken securely, e.g., in localStorage
+                  //   localStorage.setItem('accessToken', response.data.longLivedToken.access_token);
+
+                    const longLivedToken = response.data.longLivedToken.access_token;
+                    localStorage.setItem('accessToken', longLivedToken);
+                    setAccessToken(longLivedToken); // Set state for accessToken
 
                     // Optionally clear the URL after processing
                     window.history.replaceState({}, document.title, window.location.pathname);
