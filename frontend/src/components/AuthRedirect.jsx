@@ -68,7 +68,7 @@ const AuthRedirect = () => {
                     )}
                 </div>
             )}
-            <FAQForm />
+            <FAQForm accessToken={accessToken} lambdaResponse={lambdaResponse} />
             <Footer />
         </>
     );
