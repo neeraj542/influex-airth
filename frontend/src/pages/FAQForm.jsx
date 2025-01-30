@@ -974,9 +974,19 @@ const FAQForm = () => {
         }
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle form submission
+
+    const handleSubmit = (formData) => {
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/submit-form`, formData, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            }
+        })
+        .then(response => {
+            console.log("AWS API Response:", response.data);
+        })
+        .catch(error => {
+            console.error("Error calling AWS API:", error.response?.data || error.message);
+        });
     };
 
     return (
