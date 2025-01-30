@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './faq-form.css';
 import { ChevronDown, Save, Trash } from 'lucide-react';
 import BusinessDetails from '../components/faq-form/BusinessDetails';
