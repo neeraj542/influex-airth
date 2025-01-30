@@ -45,11 +45,11 @@ useEffect(() => {
 
 const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("accessToken: ", access_token);
+    console.log("accessToken: ", accessToken);
     
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/submit-form`, formData, {
         headers: {
-            'Authorization': `Bearer ${access_token}`,
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         }
     })
