@@ -977,7 +977,7 @@ const FAQForm = () => {
 
 const handleSubmit = (formData) => {
     console.log("accessToken: ", access_token);
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/submit-form`, formData, {
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/submit-form`, formData, {
         headers: {
             'Authorization': `Bearer ${access_token}`,
             'Content-Type': 'application/json'
