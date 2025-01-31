@@ -11,7 +11,6 @@ import AccordionSection from '../components/faq-form/AccordionSection';
 import axios from 'axios';
 
 const FAQForm = ({ accessToken, lambdaResponse }) => {
-// const FAQForm = () => {
     const [formData, setFormData] = useState({
         businessName: '',
         industry: '',
@@ -43,9 +42,6 @@ const FAQForm = ({ accessToken, lambdaResponse }) => {
 useEffect(() => {
     console.log("Lambda Response:", lambdaResponse);
 }, [lambdaResponse]);
-// useEffect(() => {
-//     console.log("Lambda Response:", lambdaResponse);
-// }, [lambdaResponse]);
 
 const handleSubmit = (e) => {
     e.preventDefault();
