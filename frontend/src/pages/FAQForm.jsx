@@ -10,6 +10,18 @@ import FAQSection from '../components/faq-form/FAQSection';
 import AccordionSection from '../components/faq-form/AccordionSection';
 import axios from 'axios';
 
+// ErrorNotification component (inside the same file)
+const ErrorNotification = ({ message }) => {
+    return (
+        <div className="flex items-center p-4 mb-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <svg className="w-5 h-5 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 13H6m0 0V7a2 2 0 012-2h8a2 2 0 012 2v6m-4 0v7a2 2 0 01-2 2H10a2 2 0 01-2-2v-7"></path>
+            </svg>
+            <span>{message}</span>
+        </div>
+    );
+};
+
 const FAQForm = ({ accessToken, lambdaResponse }) => {
     const [formData, setFormData] = useState({
         businessName: '',
@@ -38,13 +50,15 @@ const FAQForm = ({ accessToken, lambdaResponse }) => {
             terms: false
         }
     });
-const [errors, setErrors] = useState({});
 
-useEffect(() => {
-    console.log("Lambda Response:", lambdaResponse);
-}, [lambdaResponse]);
+    const [errors, setErrors] = useState({});
+    const [showErrorNotification, setShowErrorNotification] = useState(false);
 
-const validateForm = () => {
+    useEffect(() => {
+        console.log("Lambda Response:", lambdaResponse);
+    }, [lambdaResponse]);
+
+    const validateForm = () => {
         const newErrors = {};
 
         // Business Name
@@ -83,41 +97,36 @@ const validateForm = () => {
         return newErrors;
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Validate the form
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        return; // Stop submission if there are errors
-    }
-
-    // Clear errors if no validation issues
-    setErrors({});
-
-    const accessToken = localStorage.getItem('accessToken');
-    console.log("accessToken: ", accessToken);
-
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/submit-form`, formData, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
+        // Validate the form
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            setShowErrorNotification(true);  // Show error notification
+            return; // Stop submission if there are errors
         }
-    })
-    .then(response => {
-        console.log("AWS API Response:", response.data);
-        if (response.data.lambdaResponse) {
-            console.log("Lambda Response:", response.data.lambdaResponse);
-        } else {
-            console.log("Lambda Response not found in the API response.");
-        }
-    })
-    .catch(error => {
-        console.error("Error calling AWS API:", error.response?.data || error.message);
-    });
-};
+
+        // Clear errors if no validation issues
+        setErrors({});
+        setShowErrorNotification(false);  // Hide error notification
+
+        // Proceed with submission
+        const accessToken = localStorage.getItem('accessToken');
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/submit-form`, formData, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log("AWS API Response:", response.data);
+        })
+        .catch(error => {
+            console.error("Error calling AWS API:", error.response?.data || error.message);
+        });
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 mt-12">
@@ -126,6 +135,10 @@ const handleSubmit = (e) => {
                     <h1 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-purple-900">
                         FAQ Form for Instagram Comment Automation
                     </h1>
+
+                    {showErrorNotification && (
+                        <ErrorNotification message="Please fix the errors in the form before submitting." />
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Business Details Section */}
