@@ -1,129 +1,466 @@
-import React, { useState, useEffect } from 'react';
-import './faq-form.css';
-import { ChevronDown, Save, Trash } from 'lucide-react';
-import BusinessDetails from '../components/faq-form/BusinessDetails';
-import ResponsePreferences from '../components/faq-form/ResponsePreferences';
-import NegativeComments from '../components/faq-form/NegativeComments';
-import Miscellaneous from '../components/faq-form/Miscellaneous';
-import Consent from '../components/faq-form/Consent';
-import FAQSection from '../components/faq-form/FAQSection';
-import AccordionSection from '../components/faq-form/AccordionSection';
-import axios from 'axios';
+import { useState } from "react"
+import { useForm, useFieldArray, Controller } from "react-hook-form"
+import { ChevronDown, Save, Trash, AlertCircle, Plus } from "lucide-react"
+import axios from "axios"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import "./faq-form.css"
 
 const FAQForm = () => {
-    const [formData, setFormData] = useState({
-        businessName: '',
-        industry: '',
-        socialMedia: '',
-        targetAudience: '',
-        responsePreferences: {
-            tone: [],
-            commentTypes: [],
-            responseTime: ''
-        },
-        faqList: [{ question: '', answer: '' }],
-        negativeComments: {
-            approach: [],
-            escalationContact: ''
-        },
-        miscellaneous: {
-            productsToHighlight: '',
-            specialOffers: '',
-            languages: '',
-            flaggedKeywords: '',
-            additionalNotes: ''
-        },
-        consent: {
-            brandVoice: false,
-            terms: false
-        }
-    });
+  const [activeSection, setActiveSection] = useState("business-details")
+  const [submitStatus, setSubmitStatus] = useState(null)
 
-// useEffect(() => {
-//     console.log("Lambda Response:", lambdaResponse);
-// }, [lambdaResponse]);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
+    defaultValues: {
+      businessName: "",
+      industry: "",
+      socialMedia: "",
+      responsePreferences: {
+        tone: [],
+        responseTime: "",
+      },
+      faqList: [{ question: "", answer: "" }],
+      negativeComments: {
+        approach: [],
+        escalationContact: "",
+      },
+      miscellaneous: {
+        productsToHighlight: "",
+        specialOffers: "",
+        languages: "",
+        flaggedKeywords: "",
+        additionalNotes: "",
+      },
+      consent: {
+        brandVoice: false,
+        terms: false,
+      },
+    },
+  })
 
-const handleSubmit = (e) => {
-    e.preventDefault();
-    const accessToken = localStorage.getItem('accessToken');
-    console.log("accessToken: ", accessToken);
-    
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/submit-form`, formData, {
+  const {
+    fields: faqFields,
+    append: appendFaq,
+    remove: removeFaq,
+  } = useFieldArray({
+    control,
+    name: "faqList",
+  })
+
+  const onSubmit = async (data) => {
+    setSubmitStatus("submitting")
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/submit-form`, data, {
         headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        console.log("AWS API Response:", response.data);
-        if (response.data.lambdaResponse) {
-            console.log("Lambda Response:", response.data.lambdaResponse);
-        } else {
-            console.log("Lambda Response not found in the API response.");
-        }
-    })
-    .catch(error => {
-        console.error("Error calling AWS API:", error.response?.data || error.message);
-    });
-};
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      console.log("AWS API Response:", response.data)
+      if (response.data.lambdaResponse) {
+        console.log("Lambda Response:", response.data.lambdaResponse)
+      } else {
+        console.log("Lambda Response not found in the API response.")
+      }
+      setSubmitStatus("success")
+    } catch (error) {
+      console.error("Error calling AWS API:", error.response?.data || error.message)
+      setSubmitStatus("error")
+    }
+  }
+
+  const toneOptions = ["Friendly", "Professional", "Casual"]
+  const commentTypeOptions = [
+    "Product/service inquiries",
+    "Compliments",
+    "Complaints or negative feedback",
+    "Spam or irrelevant comments",
+  ]
+  const responseTimeOptions = ["Within 1 hour", "Within 3 hours", "Within 6 hours", "Other"]
+
+  const AccordionSection = ({ title, value, children, error }) => {
+    const isActive = activeSection === value
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 mt-12">
-            <div className="max-w-full sm:max-w-3xl mx-auto">
-                <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-purple-900">
-                        FAQ Form for Instagram Comment Automation
-                    </h1>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Business Details Section */}
-                        <AccordionSection title="Business Details" value="business-details">
-                            <BusinessDetails formData={formData} setFormData={setFormData} />
-                        </AccordionSection>
-
-                        {/* Response Preferences Section */}
-                        <AccordionSection title="Response Preferences" value="response-preferences">
-                            <ResponsePreferences formData={formData} setFormData={setFormData} />
-                        </AccordionSection>
-
-                        {/* FAQ Section */}
-                        <AccordionSection title="Product/Service-Specific FAQs" value="product-service-faqs">
-                            <FAQSection formData={formData} setFormData={setFormData} />
-                        </AccordionSection>
-
-                        {/* Negative Comments Section */}
-                        <AccordionSection title="Negative Comments" value="negative-comments">
-                            <NegativeComments formData={formData} setFormData={setFormData} />
-                        </AccordionSection>
-
-                        {/* Miscellaneous Section */}
-                        <AccordionSection title="Miscellaneous" value="miscellaneous">
-                            <Miscellaneous formData={formData} setFormData={setFormData} />
-                        </AccordionSection>
-
-                        {/* Consent Section */}
-                        <AccordionSection title="Consent" value="consent">
-                            <Consent formData={formData} setFormData={setFormData} />
-                        </AccordionSection>
-
-                        <div className="flex justify-center sm:justify-end space-x-4 mt-6">
-                            <button
-                                type="submit"
-                                className="px-6 py-3 text-sm sm:text-base font-semibold text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center"
-                            >
-                                <Save className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
-                                Save
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      <div className="border rounded-lg mb-4 overflow-hidden transition-all duration-300 ease-in-out">
+        <button
+          type="button"
+          onClick={() => setActiveSection(isActive ? "" : value)}
+          className={`w-full px-4 py-3 flex justify-between items-center ${error ? "bg-red-50" : "bg-gray-50"} hover:bg-gray-100 transition-colors duration-200`}
+        >
+          <span className={`text-lg font-semibold ${error ? "text-red-600" : ""}`}>{title}</span>
+          <div className="flex items-center">
+            {error && <AlertCircle className="w-5 h-5 text-red-600 mr-2" />}
+            <ChevronDown
+              className={`w-5 h-5 transition-transform duration-200 ${isActive ? "transform rotate-180" : ""}`}
+            />
+          </div>
+        </button>
+        <div
+          className={`transition-all duration-300 ease-in-out ${isActive ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"}`}
+        >
+          <div className="p-4 border-t">{children}</div>
         </div>
-    );
-};
+      </div>
+    )
+  }
 
-export default FAQForm;
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-white py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <h1 className="text-3xl font-bold text-center mb-8 text-purple-900">
+            FAQ Form for Instagram Comment Automation
+          </h1>
 
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Business Details Section */}
+            <AccordionSection
+              title="Business Details"
+              value="business-details"
+              error={errors.businessName || errors.industry}
+            >
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="businessName">Business Name</Label>
+                  <Controller
+                    name="businessName"
+                    control={control}
+                    rules={{ required: "Business Name is required" }}
+                    render={({ field }) => (
+                      <Input id="businessName" placeholder="Enter your business name" {...field} />
+                    )}
+                  />
+                  {errors.businessName && <p className="text-red-500 text-xs mt-1">{errors.businessName.message}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="industry">Industry/Niche</Label>
+                  <Controller
+                    name="industry"
+                    control={control}
+                    rules={{ required: "Industry is required" }}
+                    render={({ field }) => (
+                      <Input id="industry" placeholder="e.g., Fitness, Beauty, Technology" {...field} />
+                    )}
+                  />
+                  {errors.industry && <p className="text-red-500 text-xs mt-1">{errors.industry.message}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="socialMedia">Social Media Handles</Label>
+                  <Controller
+                    name="socialMedia"
+                    control={control}
+                    render={({ field }) => (
+                      <Textarea
+                        id="socialMedia"
+                        placeholder="Provide links to your Instagram profile and other platforms"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            </AccordionSection>
+
+            {/* Response Preferences Section */}
+            <AccordionSection title="Comment Response Preferences" value="response-preferences">
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-base">Tone of Responses</Label>
+                  <div className="mt-2 space-y-2">
+                    {toneOptions.map((tone) => (
+                      <div key={tone} className="flex items-center">
+                        <Controller
+                          name={`responsePreferences.tone`}
+                          control={control}
+                          render={({ field }) => (
+                            <Checkbox
+                              id={`tone-${tone}`}
+                              checked={field.value?.includes(tone)}
+                              onCheckedChange={(checked) => {
+                                const updatedTone = checked
+                                  ? [...(field.value || []), tone]
+                                  : (field.value || []).filter((t) => t !== tone)
+                                field.onChange(updatedTone)
+                              }}
+                            />
+                          )}
+                        />
+                        <Label htmlFor={`tone-${tone}`} className="ml-2">
+                          {tone}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-base">Response Time</Label>
+                  <Controller
+                    name="responsePreferences.responseTime"
+                    control={control}
+                    render={({ field }) => (
+                      <RadioGroup onValueChange={field.onChange} value={field.value} className="mt-2 space-y-2">
+                        {responseTimeOptions.map((option) => (
+                          <div key={option} className="flex items-center">
+                            <RadioGroupItem value={option} id={`time-${option}`} />
+                            <Label htmlFor={`time-${option}`} className="ml-2">
+                              {option}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                  />
+                </div>
+              </div>
+            </AccordionSection>
+
+            {/* FAQ Section */}
+            <AccordionSection title="Product/Service-Specific FAQs" value="product-service-faqs" error={errors.faqList}>
+              <div className="space-y-4">
+                <Label className="text-base">Top 5 Frequently Asked Questions from Your Audience:</Label>
+                {faqFields.map((field, index) => (
+                  <div key={field.id} className="space-y-2 mb-4 border p-3 rounded-md bg-gray-50">
+                    <div>
+                      <Label htmlFor={`faq-question-${index}`}>Q{index + 1}:</Label>
+                      <Controller
+                        name={`faqList.${index}.question`}
+                        control={control}
+                        rules={{ required: "Question is required" }}
+                        render={({ field }) => (
+                          <Input id={`faq-question-${index}`} placeholder="Enter the question" {...field} />
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`faq-answer-${index}`}>A{index + 1}:</Label>
+                      <Controller
+                        name={`faqList.${index}.answer`}
+                        control={control}
+                        rules={{ required: "Answer is required" }}
+                        render={({ field }) => (
+                          <Textarea id={`faq-answer-${index}`} placeholder="Enter the answer" {...field} />
+                        )}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeFaq(index)}
+                      className="mt-2"
+                    >
+                      <Trash className="w-4 h-4 mr-1" />
+                      Remove FAQ
+                    </Button>
+                  </div>
+                ))}
+                {faqFields.length < 5 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => appendFaq({ question: "", answer: "" })}
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add More FAQs
+                  </Button>
+                )}
+                {errors.faqList && <p className="text-red-500 text-xs mt-1">{errors.faqList.message}</p>}
+
+                <div>
+                  <Label htmlFor="productsToHighlight">Products/Services to Highlight in Responses:</Label>
+                  <Controller
+                    name="miscellaneous.productsToHighlight"
+                    control={control}
+                    render={({ field }) => (
+                      <Textarea
+                        id="productsToHighlight"
+                        placeholder="List key products/services (e.g., Premium Membership, Free Consultation)"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="specialOffers">Special Offers or Discounts to Promote:</Label>
+                  <Controller
+                    name="miscellaneous.specialOffers"
+                    control={control}
+                    render={({ field }) => (
+                      <Textarea
+                        id="specialOffers"
+                        placeholder="Enter offers (e.g., 10% off, free shipping)"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            </AccordionSection>
+
+            {/* Negative Comments */}
+            <AccordionSection title="Negative Comments" value="negative-comments">
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-base">Preferred Approach to Negative Comments:</Label>
+                  <div className="mt-2 space-y-2">
+                    {[
+                      "Apologize and offer a resolution publicly",
+                      "Direct the user to private messages",
+                      "Remove/block spam comments",
+                      "Other",
+                    ].map((approach) => (
+                      <div key={approach} className="flex items-center">
+                        <Controller
+                          name="negativeComments.approach"
+                          control={control}
+                          render={({ field }) => (
+                            <Checkbox
+                              id={`approach-${approach}`}
+                              checked={field.value?.includes(approach)}
+                              onCheckedChange={(checked) => {
+                                const updatedApproach = checked
+                                  ? [...(field.value || []), approach]
+                                  : (field.value || []).filter((a) => a !== approach)
+                                field.onChange(updatedApproach)
+                              }}
+                            />
+                          )}
+                        />
+                        <Label htmlFor={`approach-${approach}`} className="ml-2">
+                          {approach}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="escalationContact">Escalation Contact:</Label>
+                  <Controller
+                    name="negativeComments.escalationContact"
+                    control={control}
+                    render={({ field }) => (
+                      <Input id="escalationContact" placeholder="Enter email or phone" {...field} />
+                    )}
+                  />
+                </div>
+              </div>
+            </AccordionSection>
+
+            {/* Miscellaneous Preferences */}
+            <AccordionSection title="Miscellaneous Preferences" value="miscellaneous">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="languages">Languages for Comment Replies:</Label>
+                  <Controller
+                    name="miscellaneous.languages"
+                    control={control}
+                    render={({ field }) => <Input id="languages" placeholder="e.g., English, Hindi" {...field} />}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="flaggedKeywords">Keywords to Flag for Immediate Attention:</Label>
+                  <Controller
+                    name="miscellaneous.flaggedKeywords"
+                    control={control}
+                    render={({ field }) => (
+                      <Input id="flaggedKeywords" placeholder="e.g., refund, scam, help" {...field} />
+                    )}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="additionalNotes">Additional Notes or Customization Requests:</Label>
+                  <Controller
+                    name="miscellaneous.additionalNotes"
+                    control={control}
+                    render={({ field }) => (
+                      <Textarea
+                        id="additionalNotes"
+                        placeholder="Enter any other preferences or instructions"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            </AccordionSection>
+
+            {/* Consent Section */}
+            <AccordionSection
+              title="Consent"
+              value="consent"
+              error={errors.consent?.brandVoice || errors.consent?.terms}
+            >
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Controller
+                    name="consent.brandVoice"
+                    control={control}
+                    rules={{ required: "You must authorize the use of your brand's public content" }}
+                    render={({ field }) => (
+                      <Checkbox id="brandVoice" checked={field.value} onCheckedChange={field.onChange} />
+                    )}
+                  />
+                  <Label htmlFor="brandVoice">
+                    I authorize the use of my brand's public content (images, videos, captions) for personalized comment
+                    replies.
+                  </Label>
+                </div>
+                {errors.consent?.brandVoice && (
+                  <p className="text-red-500 text-xs mt-1">{errors.consent.brandVoice.message}</p>
+                )}
+                <div className="flex items-center space-x-2">
+                  <Controller
+                    name="consent.terms"
+                    control={control}
+                    rules={{ required: "You must agree to the terms and conditions" }}
+                    render={({ field }) => (
+                      <Checkbox id="terms" checked={field.value} onCheckedChange={field.onChange} />
+                    )}
+                  />
+                  <Label htmlFor="terms">
+                    I agree to the terms and conditions of the Instagram comment automation service.
+                  </Label>
+                </div>
+                {errors.consent?.terms && <p className="text-red-500 text-xs mt-1">{errors.consent.terms.message}</p>}
+              </div>
+            </AccordionSection>
+
+            {/* Submit Section */}
+            <div className="flex justify-center sm:justify-end space-x-4 mt-6">
+              <Button type="submit" disabled={submitStatus === "submitting"} className="px-6 py-3 text-sm sm:text-base font-semibold text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center">
+                <Save className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
+                {submitStatus === "submitting" ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </form>
+
+          {submitStatus === "success" && (
+            <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-md">Form submitted successfully!</div>
+          )}
+          {submitStatus === "error" && (
+            <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
+              An error occurred while submitting the form. Please try again.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default FAQForm
 
 // ------------------------------------------------ code not working
 
