@@ -38,13 +38,65 @@ const FAQForm = ({ accessToken, lambdaResponse }) => {
             terms: false
         }
     });
+const [errors, setErrors] = useState({});
 
 useEffect(() => {
     console.log("Lambda Response:", lambdaResponse);
 }, [lambdaResponse]);
 
+const validateForm = () => {
+        const newErrors = {};
+
+        // Business Name
+        if (!formData.businessName) {
+            newErrors.businessName = 'Business name is required.';
+        }
+
+        // Industry
+        if (!formData.industry) {
+            newErrors.industry = 'Industry is required.';
+        }
+
+        // Social Media (Assuming URL format validation)
+        const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9]+)\.[a-zA-Z]{2,3}(\/\S*)?$/;
+        if (!formData.socialMedia || !urlRegex.test(formData.socialMedia)) {
+            newErrors.socialMedia = 'Please provide a valid social media URL.';
+        }
+
+        // Response Time (Ensuring it's selected)
+        if (!formData.responsePreferences.responseTime) {
+            newErrors.responseTime = 'Please select a response time.';
+        }
+
+        // Validate FAQs
+        formData.faqList.forEach((faq, index) => {
+            if (!faq.question || !faq.answer) {
+                newErrors[`faq-${index}`] = 'Both question and answer are required for each FAQ.';
+            }
+        });
+
+        // Consent (example for checkbox validation)
+        if (!formData.consent.brandVoice || !formData.consent.terms) {
+            newErrors.consent = 'You must accept all consents.';
+        }
+
+        return newErrors;
+    };
+
+
 const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate the form
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return; // Stop submission if there are errors
+    }
+
+    // Clear errors if no validation issues
+    setErrors({});
+
     const accessToken = localStorage.getItem('accessToken');
     console.log("accessToken: ", accessToken);
 
@@ -79,16 +131,24 @@ const handleSubmit = (e) => {
                         {/* Business Details Section */}
                         <AccordionSection title="Business Details" value="business-details">
                             <BusinessDetails formData={formData} setFormData={setFormData} />
+                            {errors.businessName && <p className="text-red-500 text-sm">{errors.businessName}</p>}
+                            {errors.industry && <p className="text-red-500 text-sm">{errors.industry}</p>}
                         </AccordionSection>
 
                         {/* Response Preferences Section */}
                         <AccordionSection title="Response Preferences" value="response-preferences">
                             <ResponsePreferences formData={formData} setFormData={setFormData} />
+                            {errors.responseTime && <p className="text-red-500 text-sm">{errors.responseTime}</p>}
                         </AccordionSection>
 
                         {/* FAQ Section */}
                         <AccordionSection title="Product/Service-Specific FAQs" value="product-service-faqs">
                             <FAQSection formData={formData} setFormData={setFormData} />
+                            {formData.faqList.map((faq, index) => (
+                                <div key={index}>
+                                    {errors[`faq-${index}`] && <p className="text-red-500 text-sm">{errors[`faq-${index}`]}</p>}
+                                </div>
+                            ))}
                         </AccordionSection>
 
                         {/* Negative Comments Section */}
@@ -104,6 +164,7 @@ const handleSubmit = (e) => {
                         {/* Consent Section */}
                         <AccordionSection title="Consent" value="consent">
                             <Consent formData={formData} setFormData={setFormData} />
+                            {errors.consent && <p className="text-red-500 text-sm">{errors.consent}</p>}
                         </AccordionSection>
 
                         <div className="flex justify-center sm:justify-end space-x-4 mt-6">
