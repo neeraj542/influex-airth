@@ -10,7 +10,7 @@ import FAQSection from '../components/faq-form/FAQSection';
 import AccordionSection from '../components/faq-form/AccordionSection';
 import axios from 'axios';
 
-// const FAQForm = ({ accessToken, lambdaResponse }) => {
+const FAQForm = ({ accessToken, lambdaResponse }) => {
 const FAQForm = () => {
     const [formData, setFormData] = useState({
         businessName: '',
