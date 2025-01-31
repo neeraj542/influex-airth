@@ -11,7 +11,7 @@ import AccordionSection from '../components/faq-form/AccordionSection';
 import axios from 'axios';
 
 const FAQForm = ({ accessToken, lambdaResponse }) => {
-const FAQForm = () => {
+// const FAQForm = () => {
     const [formData, setFormData] = useState({
         businessName: '',
         industry: '',
