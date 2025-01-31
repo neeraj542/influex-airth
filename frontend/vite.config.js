@@ -14,6 +14,11 @@ export default ({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        'components': path.resolve(__dirname, 'src/components'),
+        'utils': path.resolve(__dirname, 'src/lib/utils'),
+        'ui': path.resolve(__dirname, 'src/components/ui'),
+        'lib': path.resolve(__dirname, 'src/lib'),
+        'hooks': path.resolve(__dirname, 'src/hooks'),
       },
     },
   })
