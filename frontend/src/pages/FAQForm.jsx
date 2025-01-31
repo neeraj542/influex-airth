@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import './faq-form.css';
 import { ChevronDown, Save, Trash } from 'lucide-react';
@@ -53,7 +54,6 @@ const FAQForm = ({ accessToken, lambdaResponse }) => {
 
     const [errors, setErrors] = useState({});
     const [showErrorNotification, setShowErrorNotification] = useState(false);
-    const [currentStep, setCurrentStep] = useState(1);
 
     useEffect(() => {
         console.log("Lambda Response:", lambdaResponse);
@@ -129,14 +129,6 @@ const FAQForm = ({ accessToken, lambdaResponse }) => {
         });
     };
 
-    const handleNextStep = () => {
-        setCurrentStep(prevStep => Math.min(prevStep + 1, 6)); // Assuming 6 steps in total
-    };
-
-    const handlePreviousStep = () => {
-        setCurrentStep(prevStep => Math.max(prevStep - 1, 1)); // Can't go below step 1
-    };
-
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 mt-12">
             <div className="max-w-full sm:max-w-3xl mx-auto">
@@ -149,109 +141,54 @@ const FAQForm = ({ accessToken, lambdaResponse }) => {
                         <ErrorNotification message="Please fix the errors in the form before submitting." />
                     )}
 
-                    {/* Progress Bar */}
-                    <div className="mb-6">
-                        <div className="relative pt-1">
-                            <div className="flex mb-2 items-center justify-between">
-                                <div className="flex items-center">
-                                    <span className="text-sm font-medium text-purple-700">{currentStep} / 6</span>
-                                </div>
-                            </div>
-                            <div className="flex mb-6">
-                                <div className="flex-1 flex mb-2">
-                                    <div className="w-full bg-gray-300 h-2 rounded-full">
-                                        <div
-                                            className="bg-purple-600 h-2 rounded-full"
-                                            style={{ width: `${(currentStep / 6) * 100}%` }}
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Business Details Section */}
-                        {currentStep === 1 && (
-                            <AccordionSection title="Business Details" value="business-details">
-                                <BusinessDetails formData={formData} setFormData={setFormData} />
-                                {errors.businessName && <p className="text-red-500 text-sm">{errors.businessName}</p>}
-                                {errors.industry && <p className="text-red-500 text-sm">{errors.industry}</p>}
-                            </AccordionSection>
-                        )}
+                        <AccordionSection title="Business Details" value="business-details">
+                            <BusinessDetails formData={formData} setFormData={setFormData} />
+                            {errors.businessName && <p className="text-red-500 text-sm">{errors.businessName}</p>}
+                            {errors.industry && <p className="text-red-500 text-sm">{errors.industry}</p>}
+                        </AccordionSection>
 
                         {/* Response Preferences Section */}
-                        {currentStep === 2 && (
-                            <AccordionSection title="Response Preferences" value="response-preferences">
-                                <ResponsePreferences formData={formData} setFormData={setFormData} />
-                                {errors.responseTime && <p className="text-red-500 text-sm">{errors.responseTime}</p>}
-                            </AccordionSection>
-                        )}
+                        <AccordionSection title="Response Preferences" value="response-preferences">
+                            <ResponsePreferences formData={formData} setFormData={setFormData} />
+                            {errors.responseTime && <p className="text-red-500 text-sm">{errors.responseTime}</p>}
+                        </AccordionSection>
 
                         {/* FAQ Section */}
-                        {currentStep === 3 && (
-                            <AccordionSection title="Product/Service-Specific FAQs" value="product-service-faqs">
-                                <FAQSection formData={formData} setFormData={setFormData} />
-                                {formData.faqList.map((faq, index) => (
-                                    <div key={index}>
-                                        {errors[`faq-${index}`] && <p className="text-red-500 text-sm">{errors[`faq-${index}`]}</p>}
-                                    </div>
-                                ))}
-                            </AccordionSection>
-                        )}
+                        <AccordionSection title="Product/Service-Specific FAQs" value="product-service-faqs">
+                            <FAQSection formData={formData} setFormData={setFormData} />
+                            {formData.faqList.map((faq, index) => (
+                                <div key={index}>
+                                    {errors[`faq-${index}`] && <p className="text-red-500 text-sm">{errors[`faq-${index}`]}</p>}
+                                </div>
+                            ))}
+                        </AccordionSection>
 
                         {/* Negative Comments Section */}
-                        {currentStep === 4 && (
-                            <AccordionSection title="Negative Comments" value="negative-comments">
-                                <NegativeComments formData={formData} setFormData={setFormData} />
-                            </AccordionSection>
-                        )}
+                        <AccordionSection title="Negative Comments" value="negative-comments">
+                            <NegativeComments formData={formData} setFormData={setFormData} />
+                        </AccordionSection>
 
                         {/* Miscellaneous Section */}
-                        {currentStep === 5 && (
-                            <AccordionSection title="Miscellaneous" value="miscellaneous">
-                                <Miscellaneous formData={formData} setFormData={setFormData} />
-                            </AccordionSection>
-                        )}
+                        <AccordionSection title="Miscellaneous" value="miscellaneous">
+                            <Miscellaneous formData={formData} setFormData={setFormData} />
+                        </AccordionSection>
 
                         {/* Consent Section */}
-                        {currentStep === 6 && (
-                            <AccordionSection title="Consent" value="consent">
-                                <Consent formData={formData} setFormData={setFormData} />
-                                {errors.consent && <p className="text-red-500 text-sm">{errors.consent}</p>}
-                            </AccordionSection>
-                        )}
+                        <AccordionSection title="Consent" value="consent">
+                            <Consent formData={formData} setFormData={setFormData} />
+                            {errors.consent && <p className="text-red-500 text-sm">{errors.consent}</p>}
+                        </AccordionSection>
 
-                        {/* Navigation Buttons */}
-                        <div className="flex justify-between mt-6">
+                        <div className="flex justify-center sm:justify-end space-x-4 mt-6">
                             <button
-                                type="button"
-                                onClick={handlePreviousStep}
-                                className="px-6 py-3 text-sm sm:text-base font-semibold text-white bg-gray-500 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                disabled={currentStep === 1}
+                                type="submit"
+                                className="px-6 py-3 text-sm sm:text-base font-semibold text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center"
                             >
-                                Previous
+                                <Save className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
+                                Save
                             </button>
-
-                            <div className="flex justify-end">
-                                {currentStep < 6 ? (
-                                    <button
-                                        type="button"
-                                        onClick={handleNextStep}
-                                        className="px-6 py-3 text-sm sm:text-base font-semibold text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center"
-                                    >
-                                        Next
-                                    </button>
-                                ) : (
-                                    <button
-                                        type="submit"
-                                        className="px-6 py-3 text-sm sm:text-base font-semibold text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center"
-                                    >
-                                        <Save className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
-                                        Save
-                                    </button>
-                                )}
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -261,7 +198,6 @@ const FAQForm = ({ accessToken, lambdaResponse }) => {
 };
 
 export default FAQForm;
-
 
 // ------------------------------------------------ code not working
 
