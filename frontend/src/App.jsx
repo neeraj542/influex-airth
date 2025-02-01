@@ -1,3 +1,4 @@
+
 // import React, { useState, useEffect } from 'react';
 // import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 // import axios from 'axios';
@@ -145,6 +146,7 @@ import SignupPage from "./pages/auth/SignupPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ProfilePage from "./pages/ProfilePage";
+import AuthRedirect from "./components/AuthRedirect";
 // import NotFoundPage from "./pages/NotFoundPage";
 
 const App = () => {
@@ -188,6 +190,7 @@ const App = () => {
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/auth/redirect" element={<AuthRedirect />} />
 
         <Route path="/faq-form" element={<FAQForm />} />
         <Route path="/profile" element={<ProfilePage />} />
