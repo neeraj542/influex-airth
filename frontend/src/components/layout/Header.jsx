@@ -1,96 +1,170 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, LogOut } from 'lucide-react'; // Icons for user profile and logout
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { User, LogOut, Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
-/**
- * The `Header` component renders a fixed navigation header at the top of the page.
- * - The logo is clickable and redirects the user to the home page.
- * - Navigation items are conditionally displayed based on the current route.
- * - The header displays Sign In/Sign Up buttons or the User Profile icon based on authentication status.
- *
- * @component
- * @example
- * return (
- *   <Header />
- * )
- *
- * @returns {JSX.Element} A React component rendering the header.
- */
-const Header = ({ navigate, hideNavItems, isLoggedIn }) => {
+const Header = ({ hideNavItems, isLoggedIn }) => {
+  const navigate = useNavigate();
+  const location = useLocation(); // Detects route changes
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null); // Reference to the menu for detecting outside clicks
 
-  // Handle logout by clearing the token and redirecting to login
+  // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Clear the stored token
-    navigate('/auth/login-user'); // Redirect to the login page
+    localStorage.removeItem("token");
+    navigate("/auth/login-user");
   };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Close menu when navigating to a new page
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <header className="fixed top-0 w-full bg-white shadow-sm z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo that redirects to home page */}
-        <div 
-          className="text-2xl font-bold text-purple-800 cursor-pointer" 
-          onClick={() => navigate('/', { replace: true })} 
+        {/* Logo */}
+        <div
+          className="text-2xl font-bold text-purple-800 cursor-pointer"
+          onClick={() => navigate("/", { replace: true })}
           aria-label="Go to homepage"
         >
           Influex 🌍
         </div>
 
         {/* Hamburger menu button for mobile */}
-        <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          ☰
+        <button
+          className="md:hidden text-purple-800 focus:outline-none"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
 
-        {/* Conditionally render the navigation items */}
-        <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:flex space-x-6`} aria-label="Main navigation">
-          {/* Only display navigation items if hideNavItems is false */}
+        {/* Mobile Navigation Menu */}
+        <nav
+          ref={menuRef}
+          className={`absolute left-0 top-full w-full bg-white shadow-md md:hidden flex flex-col items-center space-y-4 py-6 transition-all duration-300 ease-in-out ${
+            isMenuOpen ? "block" : "hidden"
+          }`}
+          aria-label="Main navigation"
+        >
           {!hideNavItems && (
             <>
-              <Link to="#what-we-do" replace className="text-purple-900 hover:text-purple-700">What We Do</Link>
-              <Link to="#features"  replace className="text-purple-900 hover:text-purple-700">Features</Link>
-              <Link to="#faq" replace className="text-purple-900 hover:text-purple-700">FAQ</Link>
-              <Link to="#download" replace className="text-purple-900 hover:text-purple-700">Download</Link>
+              <Link to="#what-we-do" className="text-purple-900 hover:text-purple-700">
+                What We Do
+              </Link>
+              <Link to="#features" className="text-purple-900 hover:text-purple-700">
+                Features
+              </Link>
+              <Link to="#faq" className="text-purple-900 hover:text-purple-700">
+                FAQ
+              </Link>
+              <Link to="#download" className="text-purple-900 hover:text-purple-700">
+                Download
+              </Link>
+            </>
+          )}
+
+          {/* Buttons or Profile Icon for Mobile */}
+          {isLoggedIn ? (
+            <div className="flex flex-col items-center space-y-4">
+              <button
+                onClick={() => navigate("/profile")}
+                className="text-purple-800 hover:text-purple-700"
+                aria-label="Go to profile"
+              >
+                <User className="h-6 w-6" />
+              </button>
+              <button
+                onClick={handleLogout}
+                className="text-white px-4 py-2 bg-purple-800 rounded-lg hover:bg-purple-900 flex items-center justify-center"
+                aria-label="Log out"
+              >
+                <LogOut className="h-5 w-5 inline mr-2" /> Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center space-y-4">
+              <button
+                onClick={() => navigate("/auth/login-user")}
+                className="text-purple-800 hover:text-purple-700"
+                aria-label="Go to login page"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => navigate("/auth/signup")}
+                className="text-white px-6 py-2 bg-purple-800 rounded-lg hover:bg-purple-900"
+                aria-label="Go to sign-up page"
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
+        </nav>
+
+        {/* Desktop Navigation Menu */}
+        <nav className="hidden md:flex space-x-6" aria-label="Main navigation">
+          {!hideNavItems && (
+            <>
+              <Link to="#what-we-do" className="text-purple-900 hover:text-purple-700">
+                What We Do
+              </Link>
+              <Link to="#features" className="text-purple-900 hover:text-purple-700">
+                Features
+              </Link>
+              <Link to="#faq" className="text-purple-900 hover:text-purple-700">
+                FAQ
+              </Link>
+              <Link to="#download" className="text-purple-900 hover:text-purple-700">
+                Download
+              </Link>
             </>
           )}
         </nav>
 
-        {/* Conditionally render buttons or profile icon */}
+        {/* Desktop Buttons */}
         {isLoggedIn ? (
-          <div className="flex items-center space-x-4">
-            {/* User Profile Icon */}
+          <div className="hidden md:flex items-center space-x-4">
             <button
-              onClick={() => navigate('/profile', { replace: true })} // Redirect to user profile page
+              onClick={() => navigate("/profile")}
               className="text-purple-800 hover:text-purple-700"
               aria-label="Go to profile"
             >
               <User className="h-6 w-6" />
             </button>
-            
-            {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="text-white px-4 py-2 bg-purple-800 rounded-lg hover:bg-purple-900"
+              className="text-white px-4 py-2 bg-purple-800 rounded-lg hover:bg-purple-900 flex items-center justify-center"
               aria-label="Log out"
             >
               <LogOut className="h-5 w-5 inline mr-2" /> Logout
             </button>
           </div>
         ) : (
-          <div className="flex items-center space-x-4">
-            {/* Sign In Button */}
+          <div className="hidden md:flex items-center space-x-4">
             <button
-              onClick={() => navigate('/auth/login-user', { replace: true })}
+              onClick={() => navigate("/auth/login-user")}
               className="text-purple-800 hover:text-purple-700"
               aria-label="Go to login page"
             >
               Sign In
             </button>
-
-            {/* Sign Up Button */}
             <button
-              onClick={() => navigate('/auth/signup', { replace: true })}
+              onClick={() => navigate("/auth/signup")}
               className="text-white px-6 py-2 bg-purple-800 rounded-lg hover:bg-purple-900"
               aria-label="Go to sign-up page"
             >
