@@ -14,15 +14,16 @@ const app = express();
 
 /**
  * CORS configuration.
- */  
+ */
 const corsOptions = {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+    origin: [process.env.FRONTEND_URL, 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    maxAge: 86400,
 };
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// app.options('*', cors(corsOptions));
 
 /**
  * Middleware to parse incoming JSON request bodies.
@@ -36,14 +37,18 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, 'public')));
 }
 
+/**
+ * Connect to MongoDB.
+ */
+const mongoURI = process.env.MONGO_URI;
+mongoose.connect(mongoURI)
+    .then(() => console.log('MongoDB connected'))
+    .catch((err) => console.error('MongoDB connection error:', err));
+
 /*
- * Routes for authentication-related functionality.
+ * Routes.
  */
 app.use('/auth', authRoutes);
-
-/**
- * Routes for API-related functionality.
- */
 app.use('/api', apiRoutes);
 
 /**
