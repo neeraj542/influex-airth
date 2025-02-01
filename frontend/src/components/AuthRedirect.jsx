@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FAQForm from '../pages/FAQForm';
 import Footer from './layout/Footer';
+import Header from './layout/Header';
 import axios from 'axios';
 
 const AuthRedirect = () => {
@@ -35,22 +36,31 @@ const AuthRedirect = () => {
                     );
                 })
                 .then((response) => {
+                    // Log the entire response data to see its structure
                     console.log("Long-Lived Token Response:", response.data);
-
-                  //   // Save the long-lived token and Lambda response
-                  //   setAccessToken(response.data.longLivedToken.access_token);
-                  //   setLambdaResponse(response.data.lambdaResponse);
-
-                  // // Optionally, store accessToken securely, e.g., in localStorage
-                  //   localStorage.setItem('accessToken', response.data.longLivedToken.access_token);
-
+                
+                    // Extract the long-lived token from the response
                     const longLivedToken = response.data.longLivedToken.access_token;
+                
+                    // Check if lambdaResponse exists in the response data
+                    if (response.data.lambdaResponse) {
+                        // If lambdaResponse exists, log it and update state
+                        console.log("Lambda Response:", response.data.lambdaResponse);
+                        setLambdaResponse(response.data.lambdaResponse); // Set state for lambdaResponse
+                    } else {
+                        // If lambdaResponse doesn't exist, log a warning
+                        console.warn("Lambda Response not found in response", response.data);
+                    }
+                
+                    // Store the long-lived token in localStorage for future use
                     localStorage.setItem('accessToken', longLivedToken);
-                    setAccessToken(longLivedToken); // Set state for accessToken
-
-                    // Optionally clear the URL after processing
+                
+                    // Set the long-lived token in component state
+                    setAccessToken(longLivedToken);
+                
+                    // Optionally, clear the URL query parameters (auth code)
                     window.history.replaceState({}, document.title, window.location.pathname);
-                })
+                })                
                 .catch((error) => {
                     console.error("Failed to get token:", error.response?.data || error.message);
                 });
@@ -75,6 +85,7 @@ const AuthRedirect = () => {
                     )}
                 </div>
             )}
+            <Header/>
             <FAQForm />
             <Footer />
         </>
@@ -82,6 +93,8 @@ const AuthRedirect = () => {
 };
 
 export default AuthRedirect;
+
+
 
 
 
