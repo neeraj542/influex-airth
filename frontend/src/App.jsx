@@ -130,7 +130,6 @@
 //   );
 // };
 
-
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
@@ -155,13 +154,16 @@ const App = () => {
   // Check if the user is logged in by looking for a token in localStorage
   const isLoggedIn = Boolean(localStorage.getItem('token'));
 
+  // Determine if the current page is the FAQ page based on the URL path
+  const isFAQPage = location.pathname === '/faq-form';
+
   return (
     <div className="min-h-screen font-sans">
       {/* Header component with dynamic props based on the current route and login state */}
       <Header
         navigate={navigate}
-        hideNavItems={isFAQPage}
-        isLoggedIn={isLoggedIn} // Pass the logged-in state to the header
+        hideNavItems={isFAQPage}  // Conditionally hide nav items based on whether we're on the FAQ page
+        isLoggedIn={isLoggedIn}   // Pass the logged-in state to the header
       />
 
       <Routes>
@@ -196,4 +198,5 @@ const App = () => {
     </div>
   );
 };
+
 export default App;
