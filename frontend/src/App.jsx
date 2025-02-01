@@ -131,39 +131,69 @@
 // };
 
 
-
-
-import React, { useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
-// import LoginButton from './components/LoginButton';
-import AuthRedirect from './components/AuthRedirect';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import Header from './components/layout/Header';
 import HeroSection from './components/HeroSection';
+import WhatWeDo from './components/WhatWeDo';
+import FAQForm from './pages/FAQForm';
+import FAQSection from './components/FAQSection';
+import InputSection from './components/InputSection';
+import DownloadSection from './components/DownloadSection';
+import Footer from './components/layout/Footer';
+import LoginPage from "./pages/auth/LoginPage";
+import SignupPage from "./pages/auth/SignupPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import ProfilePage from "./pages/ProfilePage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const App = () => {
-   const [accessToken, setAccessToken] = useState(null);
+  const navigate = useNavigate(); // Navigate programmatically between routes
+  const location = useLocation(); // Get the current route's location object
 
-   useEffect(() => {
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get('access_token');
-      if (token) {
-         setAccessToken(token);
-      }
-   }, []);
+  // Check if the user is logged in by looking for a token in localStorage
+  const isLoggedIn = Boolean(localStorage.getItem('token'));
 
-   return (
+  return (
+    <div className="min-h-screen font-sans">
+      {/* Header component with dynamic props based on the current route and login state */}
+      <Header
+        navigate={navigate}
+        hideNavItems={isFAQPage}
+        isLoggedIn={isLoggedIn} // Pass the logged-in state to the header
+      />
+
       <Routes>
-         <Route
-            path="/"
-            element={
-               <div className="container" style={{ textAlign: 'center' }}>
-                  <h1 className="title">Instagram OAuth Integration</h1>
-                  {!accessToken ? <HeroSection /> : <p>Logged in successfully! 🎉</p>}
-               </div>
-            }
-         />
+        {/* Route for the home page */}
+        <Route
+          path="/"
+          element={
+            !isFAQPage && (
+              <>
+                {/* Home page sections */}
+                <HeroSection navigate={navigate} />
+                <WhatWeDo />
+                <InputSection />
+                <FAQSection />
+                <DownloadSection />
+              </>
+            )
+          }
+        />
+        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/auth/login-user" element={<LoginPage />} />
+        <Route path="/auth/signup" element={<SignupPage />} />
+        <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-      <Route path="/auth/redirect" element={<AuthRedirect />} />
+        <Route path="/faq-form" element={<FAQForm />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
-   );
+
+      {/* Footer component visible on all pages */}
+      <Footer />
+    </div>
+  );
 };
 export default App;
