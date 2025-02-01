@@ -85,7 +85,7 @@ const AuthRedirect = () => {
                     )}
                 </div>
             )}
-            <Header/>
+{/*             <Header/> */}
             <FAQForm />
 {/*             <Footer /> */}
         </>
