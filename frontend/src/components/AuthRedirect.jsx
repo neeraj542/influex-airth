@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FAQForm from '../pages/FAQForm';
-import Footer from './layout/Footer';
-import Header from './layout/Header';
+// import Footer from './layout/Footer';
+// import Header from './layout/Header';
 import axios from 'axios';
 
 const AuthRedirect = () => {
