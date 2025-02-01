@@ -87,7 +87,7 @@ const AuthRedirect = () => {
             )}
             <Header/>
             <FAQForm />
-            <Footer />
+{/*             <Footer /> */}
         </>
     );
 };
