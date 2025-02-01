@@ -145,7 +145,7 @@ import SignupPage from "./pages/auth/SignupPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ProfilePage from "./pages/ProfilePage";
-import NotFoundPage from "./pages/NotFoundPage";
+// import NotFoundPage from "./pages/NotFoundPage";
 
 const App = () => {
   const navigate = useNavigate(); // Navigate programmatically between routes
@@ -183,7 +183,7 @@ const App = () => {
             )
           }
         />
-        <Route path="*" element={<NotFoundPage />} />
+{/*         <Route path="*" element={<NotFoundPage />} /> */}
         <Route path="/auth/login-user" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
